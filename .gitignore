@@ -1,0 +1,12 @@
+# Python
+__pycache__/
+*.py[cod]
+
+# Virtual Environment
+url_shortener_env/
+venv/
+env/
+.venv/
+
+# VS Code
+.vscode/
