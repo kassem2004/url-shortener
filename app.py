@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, redirect
 from flask_restful import Api, Resource
 import random, string
 
@@ -12,7 +12,7 @@ def Home():
 url_mapping = {}
 
 def shorten_url():
-    return "https://gde.ly/" + ''.join(random.choices(string.ascii_letters, k=7))
+    return ''.join(random.choices(string.ascii_letters, k=7))
 
 # just for testing
 @app.route('/view_mappings')
@@ -25,13 +25,19 @@ class Shorten_URL(Resource):
         url = data.get('url_input')
 
         shortened_url = shorten_url()
-        url_mapping[url] = shortened_url
+        url_mapping[shortened_url] = url
         return jsonify({
             "original_url": url,
-            "shortened_url": shortened_url
+            "shortened_url": f"https://gde.ly/{shortened_url}"
         })
+    
+class URL_Redirect(Resource):
+    def get(self, shortened_url):
+        url = url_mapping.get(shortened_url)
+        return redirect(url)
 
 api.add_resource(Shorten_URL, "/url_shortener")
+api.add_resource(URL_Redirect, "/gde.ly/<shortened_url>")
 
 if __name__ == '__main__':
     app.run(debug=True)

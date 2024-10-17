@@ -15,6 +15,7 @@
 
         <script>
             document.getElementById('urlForm').addEventListener('submit', function(event) {
+            event.preventDefault()
             const urlInput = document.getElementById('url_input').value; //take user input
             fetch('/url_shortener', { //create a POST request to /url_shortner endpoint
                 method: 'POST',
@@ -27,11 +28,11 @@
             .then(data => { //break down and display data
                 document.getElementById('result').innerHTML = 
                    `<p>Original URL: ${data.original_url}</p>
-                    <p>Shortened URL: <a href="${data.shortened_url}">${data.shortened_url}</a></p>`;
-                    })
-                    .catch(error => {
-                        document.getElementById('result').innerHTML = `<p>Error: ${error.message}</p>`;
-                    });
+                    <p>Shortened URL: <a href="${data.original_url}">${data.shortened_url}</a></p>`;
+                })
+                .catch(error => {
+                    document.getElementById('result').innerHTML = `<p>Error: ${error.message}</p>`;
+                });
             });
         </script>
     </body>
