@@ -1,15 +1,38 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>
-            URL Shortener
-        </title>
+        <title>URL Shortener</title>
     </head>
     <body>
-        <form action='/url_shortener', method="get">
-            <label for="utl_input">Enter the URL:</label>
+        <h1>URL Shortener</h1>
+        <form id="urlForm">
+            <label for="url_input">Enter the URL:</label>
             <input type="text" id="url_input" name="url_input"><br><br>
-            <input type="submit" value="Submit">
+            <input type="submit" value="Shorten URL">
         </form>
+
+        <div id="result"></div>
+
+        <script>
+            document.getElementById('urlForm').addEventListener('submit', function(event) {
+            const urlInput = document.getElementById('url_input').value; //take user input
+            fetch('/url_shortener', { //create a POST request to /url_shortner endpoint
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ url_input: urlInput }),
+            })
+            .then(response => response.json())
+            .then(data => { //break down and display data
+                document.getElementById('result').innerHTML = 
+                   `<p>Original URL: ${data.original_url}</p>
+                    <p>Shortened URL: <a href="${data.shortened_url}">${data.shortened_url}</a></p>`;
+                    })
+                    .catch(error => {
+                        document.getElementById('result').innerHTML = `<p>Error: ${error.message}</p>`;
+                    });
+            });
+        </script>
     </body>
 </html>
