@@ -24,15 +24,12 @@ class Urls(db.Model):
 def Home():
     return render_template('index.html')
 
-url_mapping = {}
+@app.route('/url_shortener/admin')
+def Admin():
+    return render_template('admin.html')
 
 def shorten_url():
     return ''.join(random.choices(string.ascii_letters, k=7))
-
-# just for testing
-@app.route('/view_mappings')
-def view_mappings():
-    return jsonify(url_mapping)
 
 class Shorten_URL(Resource):
     def post(self): #handle post request at /url_shortener endpoint
@@ -56,9 +53,21 @@ class URL_Redirect(Resource):
         url.click_count += 1
         db.session.commit()
         return redirect(url.original_url)
+    
+class URL_Edit(Resource):
+    def delete(self, shortened_url):
+        url = Urls.query.filter_by(shortened_url = shortened_url).first()
+        db.session.delete(url)
+        db.session.commit()
+        return 'The short URL is deleted'
+    
+    def get(self, shortened_url):
+        url = Urls.query.filter_by(shortened_url = shortened_url).first()
+        return url.click_count
 
 api.add_resource(Shorten_URL, "/url_shortener")
 api.add_resource(URL_Redirect, "/gde.ly/<shortened_url>")
+api.add_resource(URL_Edit, "/url_shortener/admin/<shortened_url>")
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>URL Shortener Admin</title>
+    </head>
+    <body>
+        <h1>Admin: Manage URLs</h1>
+
+        <form id="adminForm">
+            <label for="short_url_input">Enter the Short URL:</label>
+            <input type="text" id="short_url_input" name="short_url_input"><br><br>
+
+            <input type="button" value="Delete URL" id="deleteUrlBtn">
+            <input type="button" value="Get Click Count" id="getClickCountBtn">
+        </form>
+
+        <div id="admin_result"></div>
+
+        <script>
+            document.getElementById('deleteUrlBtn').addEventListener('click', function() {
+                const shortUrl = document.getElementById('short_url_input').value;
+                
+                fetch(`/url_shortener/admin/${encodeURIComponent(shortUrl)}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ short_url: shortUrl }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('admin_result').innerHTML = `<p>${data.message}</p>`;
+                })
+                .catch(error => {
+                    document.getElementById('admin_result').innerHTML = `<p>Error: ${error.message}</p>`;
+                });
+            });
+
+            document.getElementById('getClickCountBtn').addEventListener('click', function() {
+                const shortUrl = document.getElementById('short_url_input').value;
+
+                fetch(`/url_shortener/admin/${encodeURIComponent(shortUrl)}`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('admin_result').innerHTML = `<p>Click Count: ${data}</p>`;
+                })
+                .catch(error => {
+                    document.getElementById('admin_result').innerHTML = `<p>Error: ${error.message}</p>`;
+                });
+            });
+        </script>
+    </body>
+</html>
