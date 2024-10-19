@@ -53,6 +53,8 @@ class Shorten_URL(Resource):
 class URL_Redirect(Resource):
     def get(self, shortened_url):
         url = Urls.query.filter_by(shortened_url=shortened_url).first()
+        url.click_count += 1
+        db.session.commit()
         return redirect(url.original_url)
 
 api.add_resource(Shorten_URL, "/url_shortener")
